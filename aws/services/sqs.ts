@@ -1,7 +1,7 @@
 import { App, Duration } from "aws-cdk-lib"
 import { Queue, QueueEncryption } from "aws-cdk-lib/aws-sqs"
 
-export const createPendingPaymentQueue = (app: App) =>
+export const createPendingPaymentQueue = (app: any) =>
   new Queue(app, "PendingPaymentQueue", {
     queueName: "PendingPaymentQueue",
     visibilityTimeout: Duration.seconds(30),
