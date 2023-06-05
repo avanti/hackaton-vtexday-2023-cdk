@@ -1,0 +1,187 @@
+{
+  "version": "2.0",
+  "routeKey": "$default",
+  "rawPath": "/path/to/resource",
+  "rawQueryString": "parameter1=value1&parameter1=value2&parameter2=value",
+  "cookies": ["cookie1", "cookie2"],
+  "headers": {
+    "Header1": "value1",
+    "Header2": "value1,value2"
+  },
+  "queryStringParameters": {
+    "parameter1": "value1,value2",
+    "parameter2": "value"
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "api-id",
+    "authentication": {
+      "clientCert": {
+        "clientCertPem": "CERT_CONTENT",
+        "subjectDN": "www.example.com",
+        "issuerDN": "Example issuer",
+        "serialNumber": "a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1:a1",
+        "validity": {
+          "notBefore": "May 28 12:30:02 2019 GMT",
+          "notAfter": "Aug  5 09:36:04 2021 GMT"
+        }
+      }
+    },
+    "authorizer": {
+      "jwt": {
+        "claims": {
+          "claim1": "value1",
+          "claim2": "value2"
+        },
+        "scopes": ["scope1", "scope2"]
+      }
+    },
+    "domainName": "id.execute-api.us-east-1.amazonaws.com",
+    "domainPrefix": "id",
+    "http": {
+      "method": "POST",
+      "path": "/path/to/resource",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "192.168.0.1/32",
+      "userAgent": "agent"
+    },
+    "requestId": "id",
+    "routeKey": "$default",
+    "stage": "$default",
+    "time": "12/Mar/2020:19:03:58 +0000",
+    "timeEpoch": 1583348638390
+  },
+  "body": {
+    "reference": "Y",
+    "orderId": "c-l!",
+    "shopperInteraction": "N",
+    "transactionId": "0-=J",
+    "paymentId": "Pa?f5",
+    "paymentMethod": "u",
+    "paymentMethodCustomCode": "",
+    "merchantName": "RUdlb)L7Z",
+    "value": null,
+    "currency": "mk$s",
+    "installments": null,
+    "deviceFingerprint": "+",
+    "card": {
+      "holder": "dJz7[:e",
+      "number": "tEDL-q",
+      "csc": "5BW^",
+      "expiration": {
+        "month": "bxYB6b@@",
+        "year": "B!)#^\"F*"
+      },
+      "holderToken": "<string>",
+      "bin": "<string>",
+      "numberToken": "<string>",
+      "numberLength": "<number>",
+      "cscToken": "<string>",
+      "cscLength": "<number>",
+      "document": "<string>"
+    },
+    "miniCart": {
+      "shippingValue": 1,
+      "taxValue": 0,
+      "buyer": {
+        "firstName": "AH]cr] ",
+        "lastName": "g",
+        "document": "",
+        "documentType": "pD%%}N]0g",
+        "email": "Yu",
+        "phone": "a5kbCj5;\"c",
+        "isCorporate": false,
+        "id": "k2AFEl",
+        "corporateName": "t1ti^",
+        "tradeName": "sN{l[tpS}",
+        "corporateDocument": "\"5fses2:0",
+        "createdDate": "JyK^A)6i=["
+      },
+      "shippingAddress": {
+        "country": "nMH%ev81`",
+        "street": "[cQV{i\\\\",
+        "number": "!ibkJFa;J^",
+        "neighborhood": "H9~P'r{?D",
+        "postalCode": "P?x)]",
+        "city": "",
+        "state": "vk5 M3",
+        "complement": ""
+      },
+      "billingAddress": {
+        "country": "q]",
+        "street": "i7r2#\\4>a",
+        "number": "<@n",
+        "neighborhood": "Ld",
+        "postalCode": "fa06@;$",
+        "city": "R",
+        "state": "Dv1SM",
+        "complement": "c=$H^W*V"
+      },
+      "items": [
+        {
+          "id": "\\D",
+          "name": "kBH",
+          "price": "<number>",
+          "quantity": "<integer>",
+          "discount": "<integer>",
+          "deliveryType": "<string>",
+          "categoryId": "<string>",
+          "sellerId": "<string>",
+          "taxRate": "<number>",
+          "taxValue": "<number>"
+        },
+        {
+          "id": "4ZO@+|,lmZ",
+          "name": "=mc5^q~r",
+          "price": "<number>",
+          "quantity": "<integer>",
+          "discount": "<integer>",
+          "deliveryType": "<string>",
+          "categoryId": "<string>",
+          "sellerId": "<string>",
+          "taxRate": "<number>",
+          "taxValue": "<number>"
+        }
+      ]
+    },
+    "url": "*Q9.Y",
+    "callbackUrl": "https://coinshop.vtexpayments.com.br/payment-provider/transactions/900BA26FEAC84332A53AE1007E740DE3/payments/E713830E32764BF99028A0A275841BFC/notification",
+    "returnUrl": "E",
+    "verificationOnly": false,
+    "installmentsInterestRate": "<number>",
+    "installmentsValue": "<number>",
+    "ipAddress": "<string>",
+    "recipients": {
+      "id": "<string>",
+      "name": "<string>",
+      "documentType": "<string>",
+      "document": "<string>",
+      "role": "<string>",
+      "amount": "<number>",
+      "chargeProcessingFee": "<boolean>",
+      "chargebackLiable": "<boolean>"
+    },
+    "merchantSettings": [
+      {
+        "name": "<string>",
+        "value": "<string>"
+      },
+      {
+        "name": "<string>",
+        "value": "<string>"
+      }
+    ],
+    "inboundRequestUrl": "<string>",
+    "secureProxyUrl": "<string>",
+    "sandBoxMode": false,
+    "totalCartValue": "<number>"
+  },
+  "pathParameters": {
+    "parameter1": "value1"
+  },
+  "isBase64Encoded": true,
+  "stageVariables": {
+    "stageVariable1": "value1",
+    "stageVariable2": "value2"
+  }
+}

@@ -1,26 +1,20 @@
-#!/usr/bin/env node
-import "source-map-support/register"
-
 // CDK Types & Enums
 import { StartingPosition, FilterCriteria, FilterRule } from "aws-cdk-lib/aws-lambda"
 import { RestApi, Cors, LambdaIntegration } from "aws-cdk-lib/aws-apigateway"
 import { DynamoEventSource } from "aws-cdk-lib/aws-lambda-event-sources"
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources"
-import { App } from "aws-cdk-lib"
+import { Stack, type StackProps } from "aws-cdk-lib"
+import { Construct } from "constructs"
 
 // AWS Services abstraction
 import { createPendingPaymentQueue } from "./services/sqs"
 import { createPaymentTable } from "./services/dynamo"
 import { createFunction } from "./services/lambda"
 
-import * as cdk from "aws-cdk-lib"
-import { Construct } from "constructs"
-
-export class VtexConnectorStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class ConnectorStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    // Create the Dynamo and SQS services
     const PaymentTable = createPaymentTable(this)
     const PendingPaymentQueue = createPendingPaymentQueue(this)
 
@@ -29,8 +23,8 @@ export class VtexConnectorStack extends cdk.Stack {
      */
 
     // Create Lambda functions
-    const Manifest = createFunction(this, "Manifest", "api-manifest")
-    const CreatePayment = createFunction(this, "CreatePayment", "create-payment", {
+    const Manifest = createFunction(this, "Manifest", "api-manifest.ts")
+    const CreatePayment = createFunction(this, "CreatePayment", "create-payment.ts", {
       TABLE_NAME: PaymentTable.tableName
     })
 
@@ -45,7 +39,7 @@ export class VtexConnectorStack extends cdk.Stack {
 
     // Create Resources
     const ManifestResource = PaymentApi.root.addResource("manifest")
-    const PaymentApiResource = PaymentApi.root.addResource("payment")
+    const PaymentApiResource = PaymentApi.root.addResource("payments")
 
     // Create Lambda Proxy Integration
     const ManifestIntegration = new LambdaIntegration(Manifest, { proxy: true })
@@ -60,9 +54,9 @@ export class VtexConnectorStack extends cdk.Stack {
      */
 
     // Create PendingPayment Lambda function
-    const PendingPayment = createFunction(this, "PendingPayment", "pending-payment", {
+    const PendingPayment = createFunction(this, "PendingPayment", "pending-payment.ts", {
       PENDING_PAYMENT_QUEUE: PendingPaymentQueue.queueName,
-      TABLE_NAME: PaymentTable.tableName
+      TABLE_NAME: PaymentTable.tableName,
     })
 
     // Send events from PaymentTable to PendingPaymentQueue on INSERT or MODIFY
@@ -97,7 +91,7 @@ export class VtexConnectorStack extends cdk.Stack {
      */
 
     // Create ProcessPayment Lambda function
-    const ProcessPayment = createFunction(this, "ProcessPayment", "process-payment", {
+    const ProcessPayment = createFunction(this, "ProcessPayment", "process-payment.ts", {
       PENDING_PAYMENT_QUEUE: PendingPaymentQueue.queueName
     })
 
@@ -128,7 +122,3 @@ export class VtexConnectorStack extends cdk.Stack {
     PendingPaymentQueue.grantConsumeMessages(ProcessPayment)
   }
 }
-
-// Create the main CDK App
-const app = new App()
-new VtexConnectorStack(app, "VtexConnectorStack", {})
