@@ -10,6 +10,7 @@ import { Construct } from "constructs"
 import { createPendingPaymentQueue } from "./services/sqs"
 import { createPaymentTable } from "./services/dynamo"
 import { createFunction } from "./services/lambda"
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam"
 
 export class ConnectorStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -27,6 +28,9 @@ export class ConnectorStack extends Stack {
     const CreatePayment = createFunction(this, "CreatePayment", "create-payment.ts", {
       TABLE_NAME: PaymentTable.tableName
     })
+    const ConfirmPayment = createFunction(this, "ConfirmPayment", "confirm-payment.ts", {
+      TABLE_NAME: PaymentTable.tableName
+    })
 
     // Create Rest API on API Gateway
     const PaymentApi = new RestApi(this, "PaymentApi", {
@@ -40,14 +44,17 @@ export class ConnectorStack extends Stack {
     // Create Resources
     const ManifestResource = PaymentApi.root.addResource("manifest")
     const PaymentApiResource = PaymentApi.root.addResource("payments")
+    const ConfirmPaymentResource = PaymentApi.root.addResource("confirm")
 
     // Create Lambda Proxy Integration
     const ManifestIntegration = new LambdaIntegration(Manifest, { proxy: true })
     const PaymentApiIntegration = new LambdaIntegration(CreatePayment, { proxy: true })
+    const ConfirmPaymentIntegration = new LambdaIntegration(ConfirmPayment, { proxy: true })
 
     // Add Lambda Proxy Integration to API Resource
     ManifestResource.addMethod("GET", ManifestIntegration)
     PaymentApiResource.addMethod("POST", PaymentApiIntegration)
+    ConfirmPaymentResource.addMethod("GET", ConfirmPaymentIntegration)
 
     /**
      * ? Pending Payment Stream
@@ -56,7 +63,7 @@ export class ConnectorStack extends Stack {
     // Create PendingPayment Lambda function
     const PendingPayment = createFunction(this, "PendingPayment", "pending-payment.ts", {
       PENDING_PAYMENT_QUEUE: PendingPaymentQueue.queueName,
-      TABLE_NAME: PaymentTable.tableName,
+      TABLE_NAME: PaymentTable.tableName
     })
 
     // Send events from PaymentTable to PendingPaymentQueue on INSERT or MODIFY
@@ -95,6 +102,14 @@ export class ConnectorStack extends Stack {
       PENDING_PAYMENT_QUEUE: PendingPaymentQueue.queueName
     })
 
+    ProcessPayment.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["ses:SendEmail", "SES:SendRawEmail"],
+        resources: ["*"],
+        effect: Effect.ALLOW
+      })
+    )
+
     // Receive messages from PendingPaymentQueue on new messages
     ProcessPayment.addEventSource(
       new SqsEventSource(PendingPaymentQueue, {
@@ -112,6 +127,7 @@ export class ConnectorStack extends Stack {
 
     // Read/Write on DynamoDB
     PaymentTable.grantReadWriteData(CreatePayment)
+    PaymentTable.grantReadWriteData(ConfirmPayment)
     PaymentTable.grantReadWriteData(PendingPayment)
     PaymentTable.grantReadWriteData(ProcessPayment)
 
